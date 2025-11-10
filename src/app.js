@@ -25,8 +25,9 @@ app.use(express.json({limit:"25kb"}))
 
 
 //routes import 
+import router from "./routes/user.routes.js";
 
 // routes declaration
-
+app.use("/LostFoundApi/v1/users" , router)
 
 export default app;
