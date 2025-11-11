@@ -11,9 +11,9 @@ const DbLogic = async ()=>{
     try {
         console.log(process.env.MONGOURL)
         console.log(DbName)
-       const dbconnection =  await mongoose.connect(`${process.env.MONGOURL}/${DbName}`,{
+       const dbconnection =  await mongoose.connect(`${process.env.MONGOURL}/${DbName}`)
 
-       } ) ; 
+       
       
         console.log("Data base has been connected successfully ") 
        console.log("Host:", dbconnection.connection.host);

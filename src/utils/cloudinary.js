@@ -11,7 +11,7 @@ cloudinary.config({
 const uploadCLoudinary = async(localPath)=>{
     console.log(localPath) ; 
     try {
-        const uploadResult = await cloudinary.v2.uploader.upload(localpath , {
+        const uploadResult = await cloudinary.v2.uploader.upload(localPath , {
         public_id : "sds" , 
         resource_type : "auto"
     })
