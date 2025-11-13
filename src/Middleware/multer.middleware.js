@@ -1,9 +1,11 @@
 
 import multer from "multer"
+import path from "path"
+
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'F:\react-chai\Lost_found\Backend\Public\temp')
+    cb(null, 'F:/react-chai/Lost_found/Backend/Public/temp')
   },
   filename: function (req, file, cb) {
    

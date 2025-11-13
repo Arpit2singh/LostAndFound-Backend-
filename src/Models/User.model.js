@@ -39,7 +39,7 @@ const UserSchema = new mongoose.Schema({
 
 
 
-} , {Timestamp : true})
+} , {timestamps : true})
 
 
 UserSchema.pre("save" , async function(next){
@@ -48,9 +48,9 @@ this.password = await bcrypt.hash(this.password , 10 ) ;
 next() ;
 })
 
-UserSchema.methods.isPasswordCorrect(async function(password){
+UserSchema.methods.isPasswordCorrect= async function(password){
        return await bcrypt.compare(password , this.password) ;  
-})
+}
 
 UserSchema.methods.generateRefreshToken = function(){
     return jwt.sign(

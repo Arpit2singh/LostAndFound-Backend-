@@ -24,6 +24,8 @@ app.use(urlencoded({extended : true , limit : "25kb"}))
 app.use(express.json({limit:"25kb"}))
 
 
+
+
 //routes import 
 import router from "./routes/user.routes.js";
 
