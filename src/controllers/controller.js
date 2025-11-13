@@ -185,7 +185,7 @@ const refreshAccessToken = asyncHandler(async(req ,res)=>{
    
       const {refreshToken , accessToken } = await GenerateAcessAndRefreshToken(user._id) ; 
    
-      return res.status(201).cookie("refreshToken" , refreshToken , options).cookies("accessToken" , accessToken , options).json(new ApiResponse(201 , {accessToken , refreshToken : refreshToken} , "accessToken refreshed"))
+      return res.status(201).cookie("refreshToken" , refreshToken , options).cookie("accessToken" , accessToken , options).json(new ApiResponse(201 , {accessToken , refreshToken : refreshToken} , "accessToken refreshed"))
       
    } catch (error) {
       throw  new ApiError(401 , "invalid refresh token") ;
@@ -197,7 +197,7 @@ const changeCurrentPassword = asyncHandler(async(req , res)=>{
     const user  = await User.findById(req.user?._id );
     const isPasswordCorrect = await user.isPasswordCorrect(oldpassword) ; 
     if(!isPasswordCorrect){
-      throw new ApiResponse(401 , "Invalid old Password") ; 
+      throw new ApiError(401 , "Invalid old Password") ; 
     }
     user.password = newpassword ; 
     await user.save({validateBeforeSave : false }) ; 
@@ -205,7 +205,8 @@ const changeCurrentPassword = asyncHandler(async(req , res)=>{
 })
 
 const getcurrentUser = asyncHandler(async(req ,res)=>{
-      return res.status(201).json(201 , req.user , "current user fetched")
+   return res.status(201).json(new ApiResponse(201 , req.user , "current user fetched"))
+
 })
 
 
@@ -224,7 +225,7 @@ const updateAccountDetails = asyncHandler(async(req,res)=>{
      },
      {new :  true} 
    ).select("-password") ; 
-   return res.staus(201).json(new ApiResponse(201 , "user details has been changes successfully")) ; 
+   return res.status(201).json(new ApiResponse(201 , "user details has been changes successfully")) ; 
 })
 
 const updateUserAvatar = asyncHandler(async(req,res)=>{
@@ -247,7 +248,7 @@ const updateUserAvatar = asyncHandler(async(req,res)=>{
       {new : true }  
    ).select("-password -refreshToken") 
 
-   return res.status(201).json( new ApiResposne(201 , "Avatar image has been changes succesfully"))
+   return res.status(201).json( new ApiResponse(201 , "Avatar image has been changes succesfully"))
 })
 
 export  {GenerateAcessAndRefreshToken , registerUser , Login , LoggedOut , refreshAccessToken} ; 
