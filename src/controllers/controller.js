@@ -103,5 +103,48 @@ console.log(avatarLocalPath, "dsn")
     
 })
 
+const Login = asyncHandler(async(req,res)=>{
+    const {email ,  password , username} = req.body  ; 
+    console.log(email) ; 
+    console.log(password) ; 
+    console.log(username) ; 
+    if(!username || !password) {
+      throw new ApiError(401 , "Fields are missing ") ; 
 
-export  {GenerateAcessAndRefreshToken , registerUser} ; 
+    }
+    const checkuser = await User.findOne({
+      $or : [{username} , {email}] 
+    }) 
+
+    if(!checkuser) {
+      throw new ApiError(401  , "user not found") ; 
+    }
+
+    const isPasswordcorrect = await checkuser.isPasswordCorrect(password)  ; 
+    if(!isPasswordcorrect) {
+      throw new ApiError(401 , "Passsword is incorrect") ; 
+    }
+    else{
+       console.log("proceeding with to generate the id and password") ; 
+    }
+
+    const {accessToken , refreshToken } = await GenerateAcessAndRefreshToken(checkuser._id) ; 
+
+    const LoggedInuser = await User.findById(checkuser._id).select("-password -refreshToken") ; 
+    
+    const options = {
+      httpOnly : true  , 
+      secure : true  ,
+    }
+
+    return res.status(201).cookie("accessToken" , accessToken , options).cookie("refreshToken" , refreshToken , options).json(
+       new ApiResponse(201 , {
+         user : LoggedInuser , accessToken , refreshToken
+
+       } , "user LoggedIn SuccessFully") 
+    )
+
+})
+
+
+export  {GenerateAcessAndRefreshToken , registerUser , Login} ; 
