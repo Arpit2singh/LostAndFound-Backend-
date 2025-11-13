@@ -192,6 +192,62 @@ const refreshAccessToken = asyncHandler(async(req ,res)=>{
    }
 })
 
+const changeCurrentPassword = asyncHandler(async(req , res)=>{
+    const {oldpassword , newpassword} = req.body ; 
+    const user  = await User.findById(req.user?._id );
+    const isPasswordCorrect = await user.isPasswordCorrect(oldpassword) ; 
+    if(!isPasswordCorrect){
+      throw new ApiResponse(401 , "Invalid old Password") ; 
+    }
+    user.password = newpassword ; 
+    await user.save({validateBeforeSave : false }) ; 
+    return res.status(201).json(new ApiResponse(201 , "Password changed Successfully")) ; 
+})
 
+const getcurrentUser = asyncHandler(async(req ,res)=>{
+      return res.status(201).json(201 , req.user , "current user fetched")
+})
+
+
+const updateAccountDetails = asyncHandler(async(req,res)=>{
+    const {fullname , email} = req.body ; 
+   if(!fullname || !email){
+      throw new ApiError(400 , "All fields are required") 
+   }
+
+   const user = await User.findByIdAndUpdate(
+     req.user?._id , {
+      $set : {
+         fullname  , 
+         email : email ,
+      },
+     },
+     {new :  true} 
+   ).select("-password") ; 
+   return res.staus(201).json(new ApiResponse(201 , "user details has been changes successfully")) ; 
+})
+
+const updateUserAvatar = asyncHandler(async(req,res)=>{
+   const localPath = req.files.avatar[0]?.path ; 
+   if(!localPath) {
+      throw new ApiError(401 , "Local Path not found updation failed ") ; 
+
+   } 
+
+   const avatar = await uploadCLoudinary(localPath) ; 
+   if(!avatar.url){
+      throw new ApiError(401 , "avatar local path not found") ; 
+   }
+   const avatarchanged = await User.findByIdAndUpdate(req.user?._id , 
+      {
+         $set : {
+            avatar : avatar.url
+          }
+      } , 
+      {new : true }  
+   ).select("-password -refreshToken") 
+
+   return res.status(201).json( new ApiResposne(201 , "Avatar image has been changes succesfully"))
+})
 
 export  {GenerateAcessAndRefreshToken , registerUser , Login , LoggedOut , refreshAccessToken} ; 
