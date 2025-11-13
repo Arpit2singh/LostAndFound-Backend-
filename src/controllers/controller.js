@@ -3,7 +3,7 @@ import ApiError from "../utils/ApiError.js";
 import ApiResponse from "../utils/ApiResponse.js";
 import uploadCLoudinary from "../utils/cloudinary.js";
 import asyncHandler from "../utils/asyncHandler.js";
-
+import jwt from "jsonwebtoken"
 
 const GenerateAcessAndRefreshToken = async(userId)=>{
     try {
@@ -169,4 +169,29 @@ res.status(201).clearCookie("accessToken" , options).clearCookie("refreshToken",
 })
 
 
-export  {GenerateAcessAndRefreshToken , registerUser , Login , LoggedOut} ; 
+const refreshAccessToken = asyncHandler(async(req ,res)=>{
+   const incomingRefreshToken = req.cookies.refreshToken || req.body.refreshToken ; 
+   if(!incomingRefreshToken){
+      throw new ApiError(401 , "Unauthorized Token , access denied") ; 
+   }
+
+   try {
+      const decodeToken  =  jwt.verify(incomingRefreshToken , process.env.REFRESHTOKEN)  ;
+      const user = await User.findById(decodeToken?._id);  
+      const options = {
+         httpOnly : true , 
+         secure :true  
+      }
+   
+      const {refreshToken , accessToken } = await GenerateAcessAndRefreshToken(user._id) ; 
+   
+      return res.status(201).cookie("refreshToken" , refreshToken , options).cookies("accessToken" , accessToken , options).json(new ApiResponse(201 , {accessToken , refreshToken : refreshToken} , "accessToken refreshed"))
+      
+   } catch (error) {
+      throw  new ApiError(401 , "invalid refresh token") ;
+   }
+})
+
+
+
+export  {GenerateAcessAndRefreshToken , registerUser , Login , LoggedOut , refreshAccessToken} ; 
