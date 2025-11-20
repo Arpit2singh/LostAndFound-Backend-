@@ -1,37 +1,32 @@
-
-import mongoose from "mongoose";
-import bcrypt from "bcrypt"
 import { Timestamp } from "mongodb";
+import mongoose from "mongoose";
 
-
-
-const ProductSchema = new mongoose.Schema({
-    productName : {
-    type : String , 
-    required : true ,
-    unique : true  
-    },
-    productDetails :{
+const ProductSchema = mongoose.Schema({
+    name:{
         type : String , 
-        required : true ,   
+        required : true ,
     },
-   
-    phoneNo :{
-        type : Number ,
-        required :true  
-    },
-    email :{
+    description:{
         type : String , 
-        required :true , 
-        unique :true,
-    }, 
-    productPhoto : {
-     type : String , 
-     required : true ,
-   }
+        required : true ,
+    },
+    LostDate:{
+        type : String , 
+        required : true ,
+    },
+    LostLocation:{
+        type : String , 
+        required : true ,
+    },
+    ProductPhoto:{
+        type : String , 
+        required : true ,
+    },
+    ContactNo:{
+        type : Number , 
+        required : true ,
+    }
 
+} ,{Timestamp:true})
 
-
-} , {Timestamp : true})
-
-export const Product = mongoose.model("ProductSchema" ,ProductSchema);
+export const Product = mongoose.model("Product" , ProductSchema)
