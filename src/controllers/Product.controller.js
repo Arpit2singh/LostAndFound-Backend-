@@ -11,7 +11,7 @@ const AddProduct = asyncHandler(async (req, res) => {
     console.log(LostDate);
     console.log(LostLocation);
     console.log(ContactNo);
-
+     // frontend updated but not able to upload 
     if (name === "") {
         throw new ApiError(101, "Name is empty ")
     }
